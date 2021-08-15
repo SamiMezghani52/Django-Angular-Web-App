@@ -12,3 +12,9 @@ def DepartmentApi(request, id=0):
     if request.method == 'GEt':
         departments = Department.objects.all()
         departments_serializer = DepartmentSerializer(departments, many=True)
+        return JsonResponse(departments_serializer.data, safe=False)
+        
+    elif request.method == 'POST':
+        department_data = JSONParser.parse(request)
+
+
