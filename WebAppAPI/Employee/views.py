@@ -6,6 +6,8 @@ from django.http.response import JsonResponse
 from .models import Department, Employess
 from .serializers import DepartmentSerializer, EmployeeSerializer
 
+from django.core.files.storage import default_storage
+
 # Create your views here.
 @csrf_exempt
 def DepartmentApi(request, id=0):
@@ -36,20 +38,20 @@ def DepartmentApi(request, id=0):
         department.delete()
         return JsonResponse("Item deleted successfully ...", safe=False)
 
-
+@csrf_exempt
 def EmployeeAPI (request, id=0):
     if request.method == 'GET':
         employee = Employess.objects.all()
         employee_serializer = EmployeeSerializer(employee, many=True)
-        return JsonResponse(employee_serializer, safe=False)
+        return JsonResponse(employee_serializer.data, safe=False)
     
     elif request.method == 'POST':
         employee_data = JSONParser().parse(request)
         employee_serializer = EmployeeSerializer(data=employee_data)
         if employee_serializer.is_valid():
             employee_serializer.save()
-            return JsonResponse("Employee created successfully...", safe=True)
-        return JsonResponse("Failed to create the employee ...", safe=True)
+            return JsonResponse("Employee created successfully...", safe=False)
+        return JsonResponse("Failed to create the employee ...", safe=False)
     
     elif request.method == 'PUT':
         employee_data = JSONParser().parse(request)
@@ -66,4 +68,9 @@ def EmployeeAPI (request, id=0):
         return JsonResponse("Employee deleted successfully ...", safe=False)
 
 
+@csrf_exempt
+def SaveFile(request):
+    file = request.FILES['uploadedfile']
+    file_name = default_storage.save(file.name, file) 
 
+    return JsonResponse(file_name, safe=False)
