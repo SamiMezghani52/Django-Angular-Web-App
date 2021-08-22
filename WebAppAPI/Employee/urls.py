@@ -12,4 +12,4 @@ urlpatterns = [
     url(r'^employee/([0-9]+)$', views.EmployeeAPI),
 
     url(r'^SaveFile/$', views.SaveFile)
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
